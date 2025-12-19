@@ -1,0 +1,3 @@
+[submodule "rag-model"]
+	path = rag-model
+	url = https://github.com/JovanAditya/rag-model.git

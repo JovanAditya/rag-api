@@ -1,0 +1,22 @@
+# Academic RAG API - Dependencies
+
+# Core
+fastapi>=0.104.0
+uvicorn>=0.24.0
+pydantic>=2.0.0
+
+# File handling
+python-multipart>=0.0.6
+
+# PDF processing
+pdfplumber>=0.11.0
+pypdf>=4.0.0
+
+# Word processing
+python-docx>=1.0.0
+
+# HTTP client (for Laravel testing)
+httpx>=0.25.0
+
+# RAG Model (from parent folder or submodule)
+# Install with: pip install -e ../rag-model
