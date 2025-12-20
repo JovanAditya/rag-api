@@ -46,11 +46,12 @@ cd rag-api
 # Atau jika sudah clone
 git submodule update --init --recursive
 
-# Aktifkan environment conda
+# Install environment dari rag-model (RECOMMENDED)
+conda env create -f rag-model/environment.yml
 conda activate academic-rag
 
-# Install dependencies
-pip install -r requirements.txt
+# (Opsional) Install GPU support untuk PyTorch
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu128
 
 # Konfigurasi
 cp .env.example .env
