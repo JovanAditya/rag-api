@@ -17,13 +17,37 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-# Storage paths - shared data folder at project root
-PROJECT_ROOT = Path(__file__).parent.parent.parent.parent  # d:\UMB\SKRIPSI\RAG
-DATA_DIR = PROJECT_ROOT / "data"
-DOCUMENTS_DIR = DATA_DIR / "documents"
-PROCESSED_DIR = DATA_DIR / "processed"
+# Storage paths - use DATA_PATH env var or fallback to project-relative
+def _get_data_dir() -> Path:
+    """Get data directory from env or calculate from project root."""
+    env_path = os.environ.get("DATA_PATH")
+    if env_path:
+        return Path(env_path).resolve()
+    
+    # Fallback: go up from this file to rag-deploy root, then into data/
+    # File: rag-api/api/services/document_service.py
+    # rag-api root: 3 levels up (rag-api/api/services -> rag-api)
+    # rag-deploy root: 4 levels up (rag-api is submodule inside rag-deploy)
+    rag_api_root = Path(__file__).resolve().parent.parent.parent
+    
+    # Check if we're inside rag-deploy (submodule) or standalone
+    parent_data = rag_api_root.parent / "data"
+    local_data = rag_api_root / "data"
+    
+    # Prefer parent rag-deploy/data if exists, else use rag-api/data
+    if parent_data.exists():
+        return parent_data.resolve()
+    return local_data.resolve()
+
+DATA_DIR = _get_data_dir()
+DOCUMENTS_DIR = (DATA_DIR / "documents").resolve()
+PROCESSED_DIR = (DATA_DIR / "processed").resolve()
 METADATA_FILE = PROCESSED_DIR / "documents_metadata.json"
-CHUNKS_FILE = PROCESSED_DIR / "chunks.json" 
+CHUNKS_FILE = PROCESSED_DIR / "chunks.json"
+
+# Log paths on startup for debugging
+logger.info(f"DATA_DIR: {DATA_DIR}")
+logger.info(f"DOCUMENTS_DIR: {DOCUMENTS_DIR}")
 
 # Ensure directories exist
 DOCUMENTS_DIR.mkdir(parents=True, exist_ok=True)
@@ -85,8 +109,8 @@ class DocumentService:
         if not DOCUMENTS_DIR.exists():
             return metadata
         
-        # Use DEBUG level to reduce log spam (this runs on every stats request)
-        logger.debug(f"Auto-generating metadata from {DOCUMENTS_DIR}")
+        # Log scanning activity
+        logger.info(f"Auto-generating metadata from {DOCUMENTS_DIR}")
         
         for file in DOCUMENTS_DIR.iterdir():
             if file.is_file() and file.suffix.lower() in ALLOWED_EXTENSIONS:
@@ -107,7 +131,7 @@ class DocumentService:
                     "error_message": None
                 }
         
-        logger.debug(f"Auto-detected {len(metadata['documents'])} documents")
+        logger.info(f"Auto-detected {len(metadata['documents'])} documents")
         return metadata
     
     def _count_chunks_for_source(self, filename: str) -> int:
@@ -146,16 +170,21 @@ class DocumentService:
     def _save_metadata(self):
         """Save documents metadata to file."""
         try:
+            logger.info(f"Saving metadata to: {METADATA_FILE}")
             with open(METADATA_FILE, 'w', encoding='utf-8') as f:
                 json.dump(self._metadata, f, ensure_ascii=False, indent=2, default=str)
+            logger.info(f"Metadata saved successfully. Documents: {len(self._metadata.get('documents', {}))}")
         except Exception as e:
-            logger.error(f"Failed to save metadata: {e}")
+            logger.error(f"Failed to save metadata to {METADATA_FILE}: {e}")
     
     def refresh_metadata(self):
         """Force refresh metadata from folder scan."""
+        logger.info(f"Refreshing metadata from {DOCUMENTS_DIR}")
         self._metadata = self._auto_generate_metadata()
         self._save_metadata()
-        return len(self._metadata.get("documents", {}))
+        doc_count = len(self._metadata.get("documents", {}))
+        logger.info(f"Refresh complete. Found {doc_count} documents.")
+        return doc_count
     
     def upload_document(
         self,

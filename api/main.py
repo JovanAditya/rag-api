@@ -11,6 +11,7 @@ Provides endpoints for:
 
 import sys
 from pathlib import Path
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import logging
@@ -32,6 +33,20 @@ from .routes.health import router as health_router
 from .routes.documents import router as documents_router
 from .routes.chunking import router as chunking_router
 from .routes.knowledge_base import router as kb_router
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Lifespan event handler for startup and shutdown."""
+    # Startup
+    logger.info("Starting Academic RAG API...")
+    logger.info("Academic RAG API started successfully")
+    
+    yield  # Application runs here
+    
+    # Shutdown
+    logger.info("Shutting down Academic RAG API...")
+
 
 # Create FastAPI app
 app = FastAPI(
@@ -56,7 +71,8 @@ $response = Http::post('http://localhost:5001/api/query', [
     """,
     version="0.1.0",
     docs_url="/docs",
-    redoc_url="/redoc"
+    redoc_url="/redoc",
+    lifespan=lifespan
 )
 
 # CORS configuration
@@ -93,20 +109,7 @@ async def root():
     }
 
 
-@app.on_event("startup")
-async def startup_event():
-    """Initialize services on startup."""
-    logger.info("Starting Academic RAG API...")
-    # Data directories are now managed by document_service (shared data/ folder)
-    logger.info("Academic RAG API started successfully")
-
-
-@app.on_event("shutdown")
-async def shutdown_event():
-    """Cleanup on shutdown."""
-    logger.info("Shutting down Academic RAG API...")
-
-
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=5001)
+
