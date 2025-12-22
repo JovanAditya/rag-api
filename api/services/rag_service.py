@@ -9,9 +9,9 @@ from typing import Dict, Any, Optional
 import logging
 import uuid
 
-# Add academic-rag to path
-ACADEMIC_RAG_PATH = Path(__file__).parent.parent.parent.parent / "academic-rag"
-sys.path.insert(0, str(ACADEMIC_RAG_PATH))
+# Add rag-model to path (submodule directory)
+RAG_MODEL_PATH = Path(__file__).parent.parent.parent / "rag-model"
+sys.path.insert(0, str(RAG_MODEL_PATH))
 
 logger = logging.getLogger(__name__)
 

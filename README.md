@@ -65,8 +65,29 @@ Edit file `.env`:
 ```env
 HOST=0.0.0.0
 PORT=5001
-LLM_PROVIDER=gemini
-GEMINI_API_KEY=your-api-key
+
+# Pilih salah satu provider LLM:
+# - openrouter (RECOMMENDED - banyak model gratis!)
+# - gemini
+# - openai
+# - anthropic
+# - ollama (local)
+
+# === OpenRouter (Recommended) ===
+LLM_PROVIDER=openrouter
+OPENROUTER_API_KEY=sk-or-v1-your-key
+# Model gratis:
+# - google/gemini-2.0-flash-exp:free  (Recommended)
+# - google/gemma-2-9b-it:free
+# - meta-llama/llama-3.2-3b-instruct:free
+# - qwen/qwen-2.5-7b-instruct:free
+OPENROUTER_MODEL=google/gemini-2.0-flash-exp:free
+
+# === Gemini (alternatif) ===
+# LLM_PROVIDER=gemini
+# GEMINI_API_KEY=your-api-key
+# GEMINI_MODEL=gemini-2.0-flash
+
 RAG_MODEL_PATH=./rag-model
 ```
 
