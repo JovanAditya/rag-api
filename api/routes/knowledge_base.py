@@ -18,7 +18,7 @@ from ..models.schemas import (
 )
 from ..services.kb_service import kb_service
 
-router = APIRouter(prefix="/api/kb", tags=["Knowledge Base"])
+router = APIRouter(prefix="/v1/kb", tags=["Knowledge Base"])
 
 
 @router.get(

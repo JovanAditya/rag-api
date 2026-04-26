@@ -31,7 +31,7 @@ ENV PYTHONPATH="${PYTHONPATH}:/app/rag-model"
 COPY api/ ./api/
 
 # Create data directories
-RUN mkdir -p /app/data/chroma_db /app/data/bm25_cache /app/logs
+RUN mkdir -p /app/data/chroma_db /app/data/bm25_cache /app/data/cache /app/logs
 
 # Expose port
 EXPOSE 5001

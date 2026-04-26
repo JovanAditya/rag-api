@@ -18,7 +18,7 @@ from ..models.schemas import (
 )
 from ..services.rag_service import rag_service
 
-router = APIRouter(prefix="/api", tags=["Query"])
+router = APIRouter(prefix="/v1", tags=["Query"])
 
 
 @router.post(

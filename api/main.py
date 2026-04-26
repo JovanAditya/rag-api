@@ -64,7 +64,7 @@ REST API for Academic RAG System.
 ## For Laravel Integration
 
 ```php
-$response = Http::post('http://localhost:5001/api/query', [
+$response = Http::post('http://localhost:5001/v1/query', [
     'question' => 'Apa syarat beasiswa prestasi?'
 ]);
 ```
@@ -100,10 +100,10 @@ async def root():
         "version": "0.1.0",
         "docs": "/docs",
         "endpoints": {
-            "query": "/api/query",
-            "documents": "/api/documents",
-            "chunking": "/api/chunking",
-            "knowledge_base": "/api/kb",
+            "query": "/v1/query",
+            "documents": "/v1/documents",
+            "chunking": "/v1/chunking",
+            "knowledge_base": "/v1/kb",
             "health": "/health"
         }
     }

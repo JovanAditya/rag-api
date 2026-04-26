@@ -17,7 +17,7 @@ from ..models.schemas import (
 )
 from ..services.chunking_service import chunking_service
 
-router = APIRouter(prefix="/api/chunking", tags=["Chunking"])
+router = APIRouter(prefix="/v1/chunking", tags=["Chunking"])
 
 
 @router.post(

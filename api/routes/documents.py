@@ -18,7 +18,7 @@ from ..models.schemas import (
 )
 from ..services.document_service import document_service
 
-router = APIRouter(prefix="/api/documents", tags=["Documents"])
+router = APIRouter(prefix="/v1/documents", tags=["Documents"])
 
 
 @router.post(

@@ -495,15 +495,21 @@ class KnowledgeBaseService:
             
             # Step 3: Clear documents folder
             if DOCUMENTS_DIR.exists():
-                shutil.rmtree(DOCUMENTS_DIR, ignore_errors=True)
-                DOCUMENTS_DIR.mkdir(exist_ok=True)
-                logger.info("Documents folder cleared")
+                for item in DOCUMENTS_DIR.iterdir():
+                    if item.is_file():
+                        item.unlink()
+                    elif item.is_dir():
+                        shutil.rmtree(item, ignore_errors=True)
+                logger.info("Documents folder contents cleared")
             
             # Step 4: Clear processed folder (chunks, metadata, cache)
             if PROCESSED_DIR.exists():
-                shutil.rmtree(PROCESSED_DIR, ignore_errors=True)
-                PROCESSED_DIR.mkdir(exist_ok=True)
-                logger.info("Processed folder cleared")
+                for item in PROCESSED_DIR.iterdir():
+                    if item.is_file():
+                        item.unlink()
+                    elif item.is_dir():
+                        shutil.rmtree(item, ignore_errors=True)
+                logger.info("Processed folder contents cleared")
             
             # Step 5: Clear BM25 cache
             cache_dir = DATA_DIR / "cache"
